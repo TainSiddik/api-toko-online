@@ -21,7 +21,6 @@ export const getAllKategori = async (req, res) => {
 }
 
 
-
 // Tambah Kategori
 export const addKategori = async (req, res) => {
     try {
@@ -45,7 +44,7 @@ export const addKategori = async (req, res) => {
         const newKategori = await Kategori.create({ kategori })
 
         // tampilkan data kategori baru yg berhasil di simpan
-        res.status(200).json({
+        res.status(201).json({
             status: "Berhasil",
             message: "Tambah kategori berhasil",
             kategori: newKategori.kategori
@@ -58,7 +57,6 @@ export const addKategori = async (req, res) => {
 
 
 // Edit Kategori
-
 export const editKategori = async (req, res) => {
     try {
         // tangkap kategori berdasarkan id
@@ -98,6 +96,8 @@ export const editKategori = async (req, res) => {
         res.status(500).json({ message: "Edit kategori gagal" })
     }
 }
+
+
 
 // delete kategori
 export const hapusKategori = async (req, res) => {
