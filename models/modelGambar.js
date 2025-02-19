@@ -21,6 +21,6 @@ const Gambar = db.define('gambar', {
 )
 
 Gambar.belongsTo(Produk, { foreignKey: "produk_id", as: "produk", onDelete: "CASCADE" })
-Produk.hasMany(Gambar, { foreignKey: "produk_id" })
+Produk.hasMany(Gambar, { foreignKey: "produk_id", as: "gambar" })
 
-export default Produk
+export default Gambar

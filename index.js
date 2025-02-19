@@ -20,6 +20,7 @@ const dbSync = async () => {
 dbSync()
 
 app.use(express.json())
+app.use(express.static("public"))
 app.use(fileUpload())
 
 // router
