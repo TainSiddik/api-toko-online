@@ -1,31 +1,26 @@
-import db from "../config/database/Connection.js";
-import { DataTypes } from "sequelize";
-import Produk from "./modelProduk.js"; // Import model Produk
+import db from "../config/database/Connection.js"
+import { Sequelize } from "sequelize"
+import Produk from "./modelProduk.js"
 
-const Gambar = db.define("gambar", {
+const { DataTypes } = Sequelize
+
+const Gambar = db.define('gambar', {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
-    produk_id: { // Foreign Key ke Produk
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Produk,
-            key: "id"
-        }
-    },
-    url_gambar: { // Simpan URL/path gambar
+    url: {
         type: DataTypes.STRING,
         allowNull: false
     }
+
 }, {
     freezeTableName: true
-});
+}
+)
 
-// Relasi: 1 Produk bisa punya banyak Gambar
-Produk.hasMany(Gambar, { foreignKey: "produk_id", onDelete: "CASCADE" });
-Gambar.belongsTo(Produk, { foreignKey: "produk_id" });
+Gambar.belongsTo(Produk, { foreignKey: "produk_id", as: "produk", onDelete: "CASCADE" })
+Produk.hasMany(Gambar, { foreignKey: "produk_id" })
 
-export default Gambar;
+export default Produk
