@@ -1,5 +1,6 @@
 import express from "express"
 import fileUpload from "express-fileupload"
+import cors from "cors"
 import "dotenv/config"
 import db from "./config/database/Connection.js"
 import kategori from "./routers/routerKategori.js"
@@ -22,6 +23,7 @@ dbSync()
 app.use(express.json())
 app.use(express.static("public"))
 app.use(fileUpload())
+app.use(cors())
 
 // router
 app.use('/api', kategori)

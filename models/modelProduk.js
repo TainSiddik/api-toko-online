@@ -18,13 +18,17 @@ const Produk = db.define('produk', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    jumlah: {
+    stok: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     deskripsi: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
+    },
+    terjual: {
+        type: DataTypes.TEXT,
+        allowNull: true
     },
 
 }, {

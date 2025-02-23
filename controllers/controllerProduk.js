@@ -16,10 +16,10 @@ export const getAllProduk = async (req, res) => {
                 {
                     model: Gambar,
                     attributes: ["url"],
-                    as: "gambar"
+                    as: "gambar",
                 }
             ],
-            attributes: { exclude: ["kategori_id"] }
+            attributes: { exclude: ["createdAt", "updatedAt"] }
         });
 
         if (produk.length === 0) {
@@ -33,14 +33,77 @@ export const getAllProduk = async (req, res) => {
     }
 }
 
+// get all data by kategori
+export const getAllProdukByKategori = async (req, res) => {
+    try {
+        const produk = await Produk.findAll({
+            where: {
+                kategori_id: req.params.kategori_id
+            },
+            include: [
+                {
+                    model: Kategori,
+                    attributes: ["kategori"],
+                    as: "kategori"
+                },
+                {
+                    model: Gambar,
+                    attributes: ["url"],
+                    as: "gambar"
+                }
+            ],
+            attributes: { exclude: ["id", "createdAt", "updatedAt", "kategori_id"] }
+        })
+        if (!produk) {
+            return res.status(404).json({ message: "produk tidak ditemukan" })
+        }
+        res.status(200).json(produk)
+    } catch (error) {
+        console.error("Error mengambil produk:", error)
+        res.status(500).json({ message: `Terjadi kesalahan server ${error}` })
+    }
+}
+
+
+// get one data produk
+export const getDetailProduk = async (req, res) => {
+    try {
+        const produk = await Produk.findOne({
+            where: {
+                id: req.params.id
+            },
+            include: [
+                {
+                    model: Kategori,
+                    attributes: ["kategori"],
+                    as: "kategori"
+                },
+                {
+                    model: Gambar,
+                    attributes: ["url"],
+                    as: "gambar"
+                }
+            ],
+            attributes: { exclude: ["id", "createdAt", "updatedAt", "kategori_id"] }
+        })
+        if (!produk) {
+            return res.status(404).json({ message: "produk tidak ditemukan" })
+        }
+        res.status(200).json(produk)
+    } catch (error) {
+        console.error("Error mengambil produk:", error)
+        res.status(500).json({ message: `Terjadi kesalahan server ${error}` })
+    }
+}
+
 
 // create new produk
 export const createProduk = async (req, res) => {
     try {
-        const { produk, harga, jumlah, deskripsi, kategori } = req.body;
+        const { produk, harga, stok, deskripsi, kategori } = req.body;
 
         // Validasi input
-        if (!produk || !harga || !jumlah || !deskripsi || !kategori) {
+        if (!produk || !harga || !stok || !deskripsi || !kategori) {
             return res.status(400).json({ message: "Semua field harus diisi" })
         }
 
@@ -55,7 +118,7 @@ export const createProduk = async (req, res) => {
         const produkBaru = await Produk.create({
             produk,
             harga,
-            jumlah,
+            stok,
             deskripsi,
             kategori_id: namaKategori.id
         });
@@ -121,4 +184,11 @@ export const createProduk = async (req, res) => {
         console.error("Error saat menambahkan produk:", error);
         res.status(500).json({ message: `Terjadi kesalahan server ${error}` });
     }
+}
+
+
+
+// delete produk
+export const deleteProduk = async (req, res) => {
+
 }
