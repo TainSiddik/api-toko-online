@@ -5,6 +5,7 @@ import "dotenv/config"
 import db from "./config/database/Connection.js"
 import kategori from "./routers/routerKategori.js"
 import produk from "./routers/routerProduk.js"
+import auth from "./routers/Auth.js"
 
 const app = express()
 const port = process.env.APP_PORT
@@ -28,6 +29,8 @@ app.use(cors())
 // router
 app.use('/api', kategori)
 app.use('/api', produk)
+app.use('/api', auth)
+
 
 app.listen(port, () => {
     console.log(`server running on port ${port}`)

@@ -2,6 +2,7 @@ import Produk from "../models/modelProduk.js"
 import Gambar from "../models/modelgambar.js"
 import Kategori from "../models/modelKategori.js"
 import path from "path"
+import fs from "fs"
 
 // get all data produk
 export const getAllProduk = async (req, res) => {
@@ -26,7 +27,16 @@ export const getAllProduk = async (req, res) => {
             return res.status(200).json({ message: "Belum ada produk" })
         }
 
-        res.status(200).json(produk)
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        const produkFinal = produk.map((p) => ({
+            ...p.toJSON(),
+            gambar: p.gambar.map((g) => ({
+                ...g,
+                url: `${baseUrl}${g.url}`, // Tambahkan domain backend
+            }))
+        }));
+
+        res.status(200).json(produkFinal);
     } catch (error) {
         console.error("Error mengambil produk:", error)
         res.status(500).json({ message: `Terjadi kesalahan server ${error}` })
@@ -89,7 +99,16 @@ export const getDetailProduk = async (req, res) => {
         if (!produk) {
             return res.status(404).json({ message: "produk tidak ditemukan" })
         }
-        res.status(200).json(produk)
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        const produkFinal = {
+            ...produk.toJSON(),
+            gambar: produk.gambar.map((g) => ({
+                ...g,
+                url: `${baseUrl}${g.url}` // Tambahkan domain backend
+            }))
+        };
+
+        res.status(200).json(produkFinal);
     } catch (error) {
         console.error("Error mengambil produk:", error)
         res.status(500).json({ message: `Terjadi kesalahan server ${error}` })
@@ -131,7 +150,7 @@ export const createProduk = async (req, res) => {
             const gambarPromises = gambarFiles.map((file) => {
                 return new Promise((resolve, reject) => {
                     const filename = `${Date.now()}-${file.name}`;
-                    const uploadPath = path.join("public/img", filename);
+                    const uploadPath = path.join("public/img/produk", filename)
 
                     file.mv(uploadPath, async (err) => {
                         if (err) {
@@ -142,7 +161,7 @@ export const createProduk = async (req, res) => {
                                 // Simpan path gambar ke database
                                 const gambarBaru = await Gambar.create({
                                     produk_id: produkBaru.id,
-                                    url: `${req.protocol}://${req.get('host')}/img/${filename}` // Path yang akan disimpan di database
+                                    url: `/img/produk/${filename}`
                                 });
                                 resolve(gambarBaru);
                             } catch (dbError) {
