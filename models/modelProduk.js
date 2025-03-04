@@ -27,7 +27,7 @@ const Produk = db.define('produk', {
         allowNull: false
     },
     terjual: {
-        type: DataTypes.TEXT,
+        type: DataTypes.INTEGER,
         allowNull: true
     },
 

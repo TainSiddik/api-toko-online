@@ -6,6 +6,7 @@ import db from "./config/database/Connection.js"
 import kategori from "./routers/routerKategori.js"
 import produk from "./routers/routerProduk.js"
 import auth from "./routers/Auth.js"
+import order from "./routers/routerOrder.js"
 
 const app = express()
 const port = process.env.APP_PORT
@@ -14,7 +15,7 @@ const dbSync = async () => {
     try {
         await db.authenticate()
         console.log("Datebase has connected")
-        // await db.sync({ force: true })
+        // await db.sync({ alter: true })
     } catch (error) {
         console.log(`Database connection has failed ${error}`)
     }
@@ -30,6 +31,7 @@ app.use(cors())
 app.use('/api', kategori)
 app.use('/api', produk)
 app.use('/api', auth)
+app.use('/api', order)
 
 
 app.listen(port, () => {
