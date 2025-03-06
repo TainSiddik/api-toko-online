@@ -110,3 +110,86 @@ export const login = async (req, res) => {
         })
     }
 }
+
+
+// Refresh Token
+export const refreshToken = async (req, res) => {
+    try {
+        const token = req.cookies.refreshToken
+        if (!token) {
+            return res.status(401).json({
+                status: "error",
+                message: "Refresh Token tidak ditemukan. Pastikan anda sudah login"
+            })
+        }
+        const user = await User.findOne({
+            where: {
+                refresh_token: token
+            }
+        })
+        if (!user) {
+            return res.status(403).json({
+                status: "error",
+                message: "Token tidak valid atau sudah kadaluarsa. Silahkan login kembali."
+            })
+        }
+        jwt.verify(token, process.env.REFRESH_TOKEN, (err, decoded) => {
+            if (err) {
+                return res.status(403).json({
+                    status: "error",
+                    message: "Token kadaluarsa atau tidak valid. Silahkan login kembali.",
+                    error: err
+                })
+            }
+
+            const userId = user.id
+            const userEmail = user.email
+
+            const accessToken = jwt.sign({ userId, userEmail }, process.env.ACCESS_TOKEN, { expiresIn: "1h" })
+
+            res.json({
+                status: "Success",
+                message: "Get new access token",
+                accessToken
+            })
+        })
+    } catch (error) {
+        console.log(error)
+
+        res.status(500).json({
+            status: "error",
+            message: "Terjadi kesalahan pada server. Coba lagi nanti."
+        })
+    }
+}
+
+
+// logout
+export const logout = async (req, res) => {
+    const token = req.cookies.refreshToken
+    try {
+        if (!token) {
+            return res.sendStatus(204)
+        }
+        const user = await User.findOne({
+            where: {
+                refresh_token: token
+            }
+        })
+        if (!user) {
+            return res.sendStatus(204)
+        }
+        await user.update({ refresh_token: null })
+        res.clearCookie('refreshToken')
+        return res.status(200).json({
+            message: "Success",
+            status: "Logout"
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "Internal Server Error",
+            message: "Logout has failed",
+            error: error.message
+        })
+    }
+}

@@ -1,6 +1,7 @@
 import express from "express"
 import fileUpload from "express-fileupload"
 import cors from "cors"
+import cookieParser from "cookie-parser"
 import "dotenv/config"
 import db from "./config/database/Connection.js"
 import kategori from "./routers/routerKategori.js"
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use(express.static("public"))
 app.use(fileUpload())
 app.use(cors())
+app.use(cookieParser())
 
 // router
 app.use('/api', kategori)
