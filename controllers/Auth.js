@@ -163,13 +163,45 @@ export const refreshToken = async (req, res) => {
     }
 }
 
+// me
+export const profile = async (req, res) => {
+    try {
+        const token = req.cookies.refreshToken
+        if (!token) {
+            return res.status(401).json({
+                status: "error",
+                message: "Refresh Token tidak ditemukan. Pastikan anda sudah login"
+            })
+        }
+        const user = await User.findOne({
+            where: {
+                refresh_token: token
+            },
+            attributes: ["name", "email", "image", "role"]
+        })
+        if (!user) {
+            return res.status(403).json({
+                status: "error",
+                message: "Token tidak valid atau sudah kadaluarsa. Silahkan login kembali."
+            })
+        }
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({
+            status: "Internal Server Error",
+            message: "Get data user has failed",
+            error: error.message
+        })
+    }
+}
+
 
 // logout
 export const logout = async (req, res) => {
     const token = req.cookies.refreshToken
     try {
         if (!token) {
-            return res.sendStatus(204)
+            return res.sendStatus(401)
         }
         const user = await User.findOne({
             where: {
