@@ -7,6 +7,7 @@ import kategori from "./routers/routerKategori.js"
 import produk from "./routers/routerProduk.js"
 import auth from "./routers/Auth.js"
 import order from "./routers/routerOrder.js"
+import payment from "./routers/routerPayment.js"
 
 const app = express()
 const port = process.env.APP_PORT
@@ -32,6 +33,7 @@ app.use('/api', kategori)
 app.use('/api', produk)
 app.use('/api', auth)
 app.use('/api', order)
+app.use("/api/payment", payment);
 
 
 app.listen(port, () => {
